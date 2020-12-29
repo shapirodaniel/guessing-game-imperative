@@ -5,55 +5,79 @@
     <meta charset="UTF-8">
     <title>Guessing Game</title>
     <link rel="stylesheet" href="main.css">
-    <!-- the MAIN.CSS file is linked here -->
-    <script src='js/guessing-game.js'></script>
-    <script src='js/events.js'></script>
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
   </head>
 
   <body>
 
     <h1>The Guessing Game!</h1>
-    <div class="top">
 
-      <div class="odd-row">
-        <span class="lightSquare"></span>
-        <span class="darkSquare"></span>
-        <span class="lightSquare"></span>
-        <span class="darkSquare"></span>
-        <span class="lightSquare"></span>
-        <span class="darkSquare"></span>
-        <span class="lightSquare"></span>
-        <span class="darkSquare"></span>
-        <span class="lightSquare"></span>
-        <span class="darkSquare"></span>
-      </div>
+    <!-- player message -->
+    <div class="player-message"></div>
 
-      <div class="even-row">
-        <span class="darkSquare"></span>
-        <span class="lightSquare"></span>
-        <span class="darkSquare"></span>
-        <span class="lightSquare"></span>
-        <span class="darkSquare"></span>
-        <span class="lightSquare"></span>
-        <span class="darkSquare"></span>
-        <span class="lightSquare"></span>
-        <span class="darkSquare"></span>
-        <span class="lightSquare"></span>
-      </div>
-
-      <div class="playing-field"></div>
-      <div class="player-message"></div>
+    <!-- won/lost modal -->
+    <div class="end-game-modal">
+      <div class="modal-message"></div>
+      <div class="play-again-btn"></div>
     </div>
-    <div class="bottom">
-      <div class="guess-field">
-        <div class="guess-input" contenteditable="true"></div>
-        <input type="button" class="submit-guess-btn"/>
+
+    <!-- wrapper -->
+    <div class="wrapper">
+
+      <!-- sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-field-wrapper">
+          <div class="guess-wrapper">
+            <label for="user-guess">Your Guess:</label>
+            <div class="user-guess" contenteditable="true"></div>
+          </div>
+          <div class="player-message"></div>
+          <input type="button" id="submit-guess-btn" value="Submit Guess"/>
+          <input type="button" id="play-again" value="Play Again"/>
+          <input type="button" id="hint" value="Get A Hint"/>
+        </div>
+      </div> 
+
+      <!-- main -->
+      <div class="main">
+        
+        <!-- hidden odd-row template -->
+        <div class="odd-row template">
+          <span class="lightSquare"></span>
+          <span class="darkSquare"></span>
+          <span class="lightSquare"></span>
+          <span class="darkSquare"></span>
+          <span class="lightSquare"></span>
+          <span class="darkSquare"></span>
+          <span class="lightSquare"></span>
+          <span class="darkSquare"></span>
+          <span class="lightSquare"></span>
+          <span class="darkSquare"></span>
+        </div>
+
+        <!-- hidden even-row template -->
+        <div class="even-row template">
+          <span class="darkSquare"></span>
+          <span class="lightSquare"></span>
+          <span class="darkSquare"></span>
+          <span class="lightSquare"></span>
+          <span class="darkSquare"></span>
+          <span class="lightSquare"></span>
+          <span class="darkSquare"></span>
+          <span class="lightSquare"></span>
+          <span class="darkSquare"></span>
+          <span class="lightSquare"></span>
+        </div>
+
+        <!-- playing field -->
+        <div class="playing-field"></div>
       </div>
-      <div class="footer">
-        <input type="button" class="play-again"/>
-        <input type="button" class="hint"/>
-      </div>
-    </div>  
+
+    </div>
+
+    <script src='js/guessing-game.js'></script> 
   </body>
 
 </html>

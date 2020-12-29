@@ -78,49 +78,59 @@ class Game {
 
     // extra functionality
     buildPlayingField() {
-        let playingField = document.querySelector('.playing-field');
-        let oddRow = document.querySelector('.odd-row');
-        let evenRow = document.querySelector('.even-row');
         for (let i=0; i<10; i++) {
-            let newRow = i % 2 === 0 ? oddRow : evenRow;
-            playingField.appendChild(newRow.cloneNode(true));
+            let newRow = i % 2 === 0 ? evenRow.cloneNode(true) : oddRow.cloneNode(true);
+            newRow.classList.toggle('template');
+            playingField.appendChild(newRow);
         }
     }
     assignNodeVals() {
         let nodes = Array.from(document.querySelectorAll('.playing-field span'));
-        let shuffled1to100 = shuffle(new Array(100).forEach((val, i) => val === i+1));
-        nodes.forEach((node, i) => {node.innerText = shuffled1to100[i]});    
+        let array100 = new Array(100).fill(null).map((val, i) => val = i+1);
+        let shuffled1to100 = shuffle(array100);
+        nodes.forEach((node, i) => {
+            node.innerText = shuffled1to100[i]
+            node.id = node.innerText;
+        });    
     }
     assignWinningNode() {
-        let winningNode = Array.from(document.querySelectorAll('.playing-field span')).filter(node => {return node.innerText === this.winningNumber;});
-        winningNode.classList.add('winner');
+        let winningNode = document.getElementById(`${this.winningNumber}`);
+        winningNode.classList.toggle('winner');
     }
 }
 
 /* ---- INIT GAME --- */
 
-// build playing field and assign number vals to 
-let game = newGame();
+// assign objects
+const gameNodes = () => {return Array.from(document.querySelectorAll('.playing-field span'));}
+const playingField = document.querySelector('.playing-field');
+const oddRow = document.querySelector('.odd-row.template');
+const evenRow = document.querySelector('.even-row.template');
+const guessField = document.querySelector('.guess-field');
+const submitBtn = document.querySelector('.submit-btn');
+const hintBtn = document.querySelector('.hint-btn');
+const playAgainBtn = document.querySelector('.play-again-btn');
+const endGameModal = document.querySelector('.end-game-modal');
+
+// build playing field, assign numbers to nodes, assign winning node
 function initializeGame() {
     this.buildPlayingField();
     this.assignNodeVals();
     this.assignWinningNode();
 }
-
-// assign objects
-const gameNodes = () => {return Array.from(document.querySelectorAll('.playing-field span'));}
-const submitField = document.querySelector('.submit-field');
-const submitBtn = document.querySelector('.submit-btn');
-const hintBtn = document.querySelector('.hint-btn');
-const playAgainBtn = document.querySelector('.play-again-btn');
+let game = newGame();
+initializeGame.call(game);
 
 // gameplay
 function clickHandler(e) {
     
-    // if a gameNode, toggle active class OFF previous selection, toggle new selection ON
-    if (gameNodes().includes(e.target)) {
-        gameNodes().filter(node => node.classList.contains('active') && node !== e.target).toggle('active');
-        e.target.classList.toggle('active');
+    // if a gameNode: 
+    // toggle active class OFF previous selection, toggle new selection ON
+    // update submitField to nodeID
+    if (gameNodes().some(node => e.target === node)) {
+        gameNodes().forEach(node => node.classList.remove('currentChoice'));
+        e.target.classList.add('currentChoice');
+        submitField.innerText = e.target.id;
     }
     // if submit button
     if (e.target.matches('.submit-btn')) {
@@ -139,16 +149,13 @@ function clickHandler(e) {
         let hints = game.provideHint();
         gameNodes().filter(val => hints.includes(val.innerText)).forEach(node => node.classList.toggle('hint'));
     }
-    // if playAgain button do a couple things
-    // close any modals
-    // 
+    // if playAgain button, toggle modal active class OFF, get new game and initialize it
+    if (e.target.matches('.play-again-btn')) {
+        endGameModal.classList.toggle('active');
+        game = newGame();
+        initializeGame.call(game);
+    }
 }
 
-// some stuff it should do
-// first guess, board is neutral
-// next guess(es), hint squares are highlighted
-// make background color change according to guess likelihood
-
-// hint and selected colors should be very different 
-
-// if winner/loser, open modal and play again prompt
+// assign ELs
+playingField.addEventListener('click', clickHandler);

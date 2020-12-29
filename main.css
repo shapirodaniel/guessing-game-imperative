@@ -3,13 +3,13 @@ html {
     touch-action: manipulation;
 }
 :root {
-    --mainBackground: #071e3d;
-    --lessMain: #1f4287;
+    --mainDarkBackground: #071e3d;
+    --mainLightBackground: #1f4287;
     --accentDark: #278ea5;
     --accentLight: #21e6c1;
 }
 body {
-    background-color: var(--mainBackground);
+    background-color: var(--mainDarkBackground);
     color: var(--accentLight);
 }
 .playing-field {
@@ -18,11 +18,17 @@ body {
     grid-template-rows: repeat(10,1fr);
 }
 .playing-field span {
-    background-color: var(--lessMain);
+    background-color: var(--mainLightBackground);
     border: 1px solid var(--accentLight);
     width: 1fr;
     height: 1fr;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.playing-field span .darkSquare {
+    color: var(--mainDarkBackground);
+}
+.playing-field span .lightSquare {
+    color: var(--mainLightBackground);
 }

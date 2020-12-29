@@ -75,4 +75,80 @@ class Game {
         let hints = [generateWinningNumber(), generateWinningNumber(), this.winningNumber];
         return shuffle(hints);
     }
+
+    // extra functionality
+    buildPlayingField() {
+        let playingField = document.querySelector('.playing-field');
+        let oddRow = document.querySelector('.odd-row');
+        let evenRow = document.querySelector('.even-row');
+        for (let i=0; i<10; i++) {
+            let newRow = i % 2 === 0 ? oddRow : evenRow;
+            playingField.appendChild(newRow.cloneNode(true));
+        }
+    }
+    assignNodeVals() {
+        let nodes = Array.from(document.querySelectorAll('.playing-field span'));
+        let shuffled1to100 = shuffle(new Array(100).forEach((val, i) => val === i+1));
+        nodes.forEach((node, i) => {node.innerText = shuffled1to100[i]});    
+    }
+    assignWinningNode() {
+        let winningNode = Array.from(document.querySelectorAll('.playing-field span')).filter(node => {return node.innerText === this.winningNumber;});
+        winningNode.classList.add('winner');
+    }
 }
+
+/* ---- INIT GAME --- */
+
+// build playing field and assign number vals to 
+let game = newGame();
+function initializeGame() {
+    this.buildPlayingField();
+    this.assignNodeVals();
+    this.assignWinningNode();
+}
+
+// assign objects
+const gameNodes = () => {return Array.from(document.querySelectorAll('.playing-field span'));}
+const submitField = document.querySelector('.submit-field');
+const submitBtn = document.querySelector('.submit-btn');
+const hintBtn = document.querySelector('.hint-btn');
+const playAgainBtn = document.querySelector('.play-again-btn');
+
+// gameplay
+function clickHandler(e) {
+    
+    // if a gameNode, toggle active class OFF previous selection, toggle new selection ON
+    if (gameNodes().includes(e.target)) {
+        gameNodes().filter(node => node.classList.contains('active') && node !== e.target).toggle('active');
+        e.target.classList.toggle('active');
+    }
+    // if submit button
+    if (e.target.matches('.submit-btn')) {
+        let outcome = game.playersGuessSubmission(submitField.innerText);
+        switch (outcome) {
+            case 'You Win!': /* winning modal */; break;
+            case 'You Lose.': /* losing modal */; break;
+            case "You\'re burning up!": /* toggle hot scheme */; break;
+            case 'You\'re lukewarm.': /* toggle warm scheme */; break;
+            case 'You\'re a bit chilly.': /* toggle chilly scheme */; break;
+            case 'You\'re ice cold!': /* toggle cold scheme */; break;
+        }
+    }
+    // if hint button, generate array of hints and toggle 'hint' on each node whose innerText matches hint array vals
+    if (e.target.matches('.hint-btn')) {
+        let hints = game.provideHint();
+        gameNodes().filter(val => hints.includes(val.innerText)).forEach(node => node.classList.toggle('hint'));
+    }
+    // if playAgain button do a couple things
+    // close any modals
+    // 
+}
+
+// some stuff it should do
+// first guess, board is neutral
+// next guess(es), hint squares are highlighted
+// make background color change according to guess likelihood
+
+// hint and selected colors should be very different 
+
+// if winner/loser, open modal and play again prompt

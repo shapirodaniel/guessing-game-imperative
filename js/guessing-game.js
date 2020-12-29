@@ -103,13 +103,14 @@ class Game {
 
 // assign objects
 const gameNodes = () => {return Array.from(document.querySelectorAll('.playing-field span'));}
+const body = document.querySelector('body');
 const playingField = document.querySelector('.playing-field');
 const oddRow = document.querySelector('.odd-row.template');
 const evenRow = document.querySelector('.even-row.template');
-const guessField = document.querySelector('.guess-field');
-const submitBtn = document.querySelector('.submit-btn');
-const hintBtn = document.querySelector('.hint-btn');
-const playAgainBtn = document.querySelector('.play-again-btn');
+const userGuess = document.querySelector('.user-guess');
+const submitGuessBtn = document.querySelector('#submit-guess-btn');
+const hintBtn = document.querySelector('#hint-btn');
+const playAgainBtn = document.querySelector('#play-again-btn');
 const endGameModal = document.querySelector('.end-game-modal');
 
 // build playing field, assign numbers to nodes, assign winning node
@@ -126,15 +127,16 @@ function clickHandler(e) {
     
     // if a gameNode: 
     // toggle active class OFF previous selection, toggle new selection ON
-    // update submitField to nodeID
+    // update userGuess to nodeID
     if (gameNodes().some(node => e.target === node)) {
         gameNodes().forEach(node => node.classList.remove('currentChoice'));
         e.target.classList.add('currentChoice');
-        submitField.innerText = e.target.id;
+        userGuess.innerText = e.target.id;
     }
     // if submit button
-    if (e.target.matches('.submit-btn')) {
-        let outcome = game.playersGuessSubmission(submitField.innerText);
+    if (e.target.matches('#submit-guess-btn')) {
+        console.log('submitBtn!');
+        let outcome = game.playersGuessSubmission(userGuess.innerText);
         switch (outcome) {
             case 'You Win!': /* winning modal */; break;
             case 'You Lose.': /* losing modal */; break;
@@ -144,13 +146,20 @@ function clickHandler(e) {
             case 'You\'re ice cold!': /* toggle cold scheme */; break;
         }
     }
-    // if hint button, generate array of hints and toggle 'hint' on each node whose innerText matches hint array vals
-    if (e.target.matches('.hint-btn')) {
-        let hints = game.provideHint();
-        gameNodes().filter(val => hints.includes(val.innerText)).forEach(node => node.classList.toggle('hint'));
+    // if hint button, generate array of hints 
+    // toggle 'hint' OFF current hints, ON new hints
+    if (e.target.matches('#hint-btn')) {
+        // clear prior hints
+        gameNodes()
+            .filter(node => node.matches('.hint'))
+            .forEach(node => node.classList.toggle('hint'));
+        // get new hints and assign to nodes
+        game.provideHint()
+            .map(val => document.getElementById(val))
+            .forEach(node => node.classList.toggle('hint'));
     }
     // if playAgain button, toggle modal active class OFF, get new game and initialize it
-    if (e.target.matches('.play-again-btn')) {
+    if (e.target.matches('#play-again-btn')) {
         endGameModal.classList.toggle('active');
         game = newGame();
         initializeGame.call(game);
@@ -158,4 +167,4 @@ function clickHandler(e) {
 }
 
 // assign ELs
-playingField.addEventListener('click', clickHandler);
+body.addEventListener('click', clickHandler);

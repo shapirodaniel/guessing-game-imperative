@@ -6,15 +6,29 @@
     <title>Guessing Game</title>
     <link rel="stylesheet" href="main.css">
     <!-- the MAIN.CSS file is linked here -->
+    <script src='js/guessing-game.js'></script>
+    <script src='js/events.js'></script>
   </head>
 
   <body>
 
+    <h1>The Guessing Game!</h1>
+    <div class="top">
+      <div class="playing-field"></div>
+      <div class="player-message"></div>
+    </div>
+    <div class="bottom">
+      <div class="guess-field">
+        <div class="guess-input" contenteditable="true"></div>
+        <input type="button" class="submit-guess-btn"/>
+      </div>
+      <div class="footer">
+        <input type="button" class="play-again"/>
+        <input type="button" class="hint"/>
+      </div>
+    </div>
 
-
-
-
-    <!-- <script src='js/guessing-game.js'></script> -->
+    
     <!-- uncomment the script tag above when you are ready to add JavaScript to your document -->
   </body>
 

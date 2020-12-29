@@ -1,1 +1,28 @@
 /* Write your CSS code in this file */
+html {
+    touch-action: manipulation;
+}
+:root {
+    --mainBackground: #071e3d;
+    --lessMain: #1f4287;
+    --accentDark: #278ea5;
+    --accentLight: #21e6c1;
+}
+body {
+    background-color: var(--mainBackground);
+    color: var(--accentLight);
+}
+.playing-field {
+    display: grid;
+    grid-template-columns: repeat(10,1fr);
+    grid-template-rows: repeat(10,1fr);
+}
+.playing-field span {
+    background-color: var(--lessMain);
+    border: 1px solid var(--accentLight);
+    width: 1fr;
+    height: 1fr;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

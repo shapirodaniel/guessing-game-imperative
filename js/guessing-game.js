@@ -72,7 +72,11 @@ class Game {
         }
     }
     provideHint() {
-        let hints = [generateWinningNumber(), generateWinningNumber(), this.winningNumber];
+        let hints = new Array(9);
+        for (let i=0; i<hints.length; i++) {
+            hints[i] = generateWinningNumber();
+        }
+        hints.push(this.winningNumber);
         return shuffle(hints);
     }
     // extra functionality
@@ -86,9 +90,13 @@ class Game {
     assignNodeVals() {
         let nodes = Array.from(document.querySelectorAll('.playing-field span'));
         let array100 = new Array(100).fill(null).map((val, i) => val = i+1);
-        let shuffled1to100 = shuffle(array100);
+        
+        // hard mode ?
+        // let shuffled1to100 = shuffle(array100);
+        
         nodes.forEach((node, i) => {
-            node.innerText = shuffled1to100[i]
+            node.innerText = array100[i];
+            // node.innerText = hardMode ? shuffled1to100[i] : array100[i];
             node.id = node.innerText;
         });    
     }
@@ -124,6 +132,7 @@ initializeGame.call(game);
 
 // gameplay
 function clickHandler(e) {
+    if (playerMessage.innerText === ('You Lose.' || 'You Win!') && !e.target.matches('#play-again-btn')) {return;}
     // gameNode
     if (gameNodes().some(node => e.target === node)) {
         gameNodes().forEach(node => node.classList.remove('currentChoice'));
@@ -154,11 +163,18 @@ function clickHandler(e) {
         game.provideHint()
             .map(val => document.getElementById(val))
             .forEach(node => node.classList.toggle('hint'));
+        // add a null val to pastGuesses, update remainingGuesses
+        game.pastGuesses.push(null);
+        remainingGuesses.innerText = `Remaining Guesses: ${5 - game.pastGuesses.length}`;
+        if (game.pastGuesses.length === 5) {
+            playerMessage.innerText = 'You Lose.';
+        }
     }
     // play-again-btn
     if (e.target.matches('#play-again-btn')) {
         playingField.innerHTML = '';
         userGuess.innerText = '';
+        playerMessage.innerText = '';
         game = newGame();
         initializeGame.call(game);
         remainingGuesses.innerText = 'Remaining Guesses: 5';

@@ -60,7 +60,11 @@ class Game {
         let burningUp = this.difference() < 10
         let lukeWarm = this.difference() < 25;
         let bitChilly = this.difference() < 50;
-        let iceCold = this.difference() < 100;        
+        let iceCold = this.difference() < 100;     
+        if (lost) {
+            game.revealWinningNode();
+        }
+
         switch (true) {
             case won:               return 'You Win!';
             case alreadyGuessed:    return 'You have already guessed that number.'; 
@@ -72,9 +76,13 @@ class Game {
         }
     }
     provideHint() {
-        let hints = new Array(9);
+        let hints = new Array(9), alreadyPicked = [this.winningNumber];
         for (let i=0; i<hints.length; i++) {
             hints[i] = generateWinningNumber();
+            while (alreadyPicked.includes(hints[i])) {
+                hints[i] = generateWinningNumber();
+            }
+            alreadyPicked.push(hints[i]);
         }
         hints.push(this.winningNumber);
         return shuffle(hints);
@@ -100,8 +108,8 @@ class Game {
             node.id = node.innerText;
         });    
     }
-    assignWinningNode() {
-        let winningNode = document.getElementById(`${this.winningNumber}`);
+    revealWinningNode() {
+        let winningNode = document.getElementById(this.winningNumber);
         winningNode.classList.toggle('winner');
     }
 }
@@ -125,13 +133,13 @@ const remainingGuesses = document.querySelector('.remaining-guesses');
 function initializeGame() {
     this.buildPlayingField();
     this.assignNodeVals();
-    this.assignWinningNode();
 }
 let game = newGame();
 initializeGame.call(game);
 
 // gameplay
 function clickHandler(e) {
+    // suspend actions except play again btn if lost
     if (playerMessage.innerText === ('You Lose.' || 'You Win!') && !e.target.matches('#play-again-btn')) {return;}
     // gameNode
     if (gameNodes().some(node => e.target === node)) {
@@ -168,6 +176,7 @@ function clickHandler(e) {
         remainingGuesses.innerText = `Remaining Guesses: ${5 - game.pastGuesses.length}`;
         if (game.pastGuesses.length === 5) {
             playerMessage.innerText = 'You Lose.';
+            game.revealWinningNode();
         }
     }
     // play-again-btn

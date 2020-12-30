@@ -110,8 +110,17 @@ class Game {
         let winningNode = document.getElementById(this.winningNumber);
         let winLoseClass = playerMessage.innerText === 'You Win!' ? 'won' : 'lost';
         winningNode.classList.toggle(winLoseClass);
-        // important! IF won, remove currentChoice class to reveal winning color
-        if (winLoseClass === 'won') {winningNode.classList.remove('currentChoice');}
+        // important! IF won, remove currentChoice class to reveal winning color and updateWinStreak()
+        if (winLoseClass === 'won') {
+            winningNode.classList.remove('currentChoice');
+            this.updateWinStreak();
+        } else {
+            winStreak.innerText = 'Current Win Streak: 0';
+        }
+    }
+    updateWinStreak() {
+        let currWins = Number(winStreak.innerText.charAt(winStreak.innerText.length - 1));
+        winStreak.innerText = `Current Win Streak: ${++currWins}`;
     }
 }
 
@@ -123,11 +132,12 @@ const body = document.querySelector('body');
 const playingField = document.querySelector('.playing-field');
 const oddRow = document.querySelector('.odd-row.template');
 const evenRow = document.querySelector('.even-row.template');
-const userGuess = document.querySelector('.user-guess');
 const playerMessage = document.querySelector('.player-message');
+const userGuess = document.querySelector('.user-guess');
 const submitGuessBtn = document.querySelector('#submit-guess-btn');
 const hintBtn = document.querySelector('#hint-btn');
 const playAgainBtn = document.querySelector('#play-again-btn');
+const winStreak = document.querySelector('.winstreak');
 const remainingGuesses = document.querySelector('.remaining-guesses');
 
 // build playing field, assign numbers to nodes

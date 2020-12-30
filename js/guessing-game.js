@@ -50,21 +50,19 @@ class Game {
         return this.checkGuess();
     }
     checkGuess() {
-        
+        // update guesses before checking if lost!
         let won = this.playersGuess === this.winningNumber;
         let alreadyGuessed = this.pastGuesses.includes(this.playersGuess);
         let novelGuess = !this.pastGuesses.includes(this.playersGuess) && this.playersGuess !== this.winningNumber;
         if (novelGuess) {this.pastGuesses.push(this.playersGuess);}
-
+        // adjust guess count, reveal winning node if lost
         let lost = this.pastGuesses.length === 5;
         let burningUp = this.difference() < 10
         let lukeWarm = this.difference() < 25;
         let bitChilly = this.difference() < 50;
-        let iceCold = this.difference() < 100;     
-        if (lost) {
-            game.revealWinningNode();
-        }
-
+        let iceCold = this.difference() < 100;
+        if (lost) {game.revealWinningNode();}
+        // return game message
         switch (true) {
             case won:               return 'You Win!';
             case alreadyGuessed:    return 'You have already guessed that number.'; 
@@ -99,7 +97,7 @@ class Game {
         let nodes = Array.from(document.querySelectorAll('.playing-field span'));
         let array100 = new Array(100).fill(null).map((val, i) => val = i+1);
         
-        // hard mode ?
+        // optional hard mode functionality:
         // let shuffled1to100 = shuffle(array100);
         
         nodes.forEach((node, i) => {
@@ -110,7 +108,10 @@ class Game {
     }
     revealWinningNode() {
         let winningNode = document.getElementById(this.winningNumber);
-        winningNode.classList.toggle('winner');
+        let winLoseClass = playerMessage.innerText === 'You Win!' ? 'won' : 'lost';
+        winningNode.classList.toggle(winLoseClass);
+        // important! IF won, remove currentChoice class to reveal winning color
+        if (winLoseClass === 'won') {winningNode.classList.remove('currentChoice');}
     }
 }
 
@@ -129,7 +130,7 @@ const hintBtn = document.querySelector('#hint-btn');
 const playAgainBtn = document.querySelector('#play-again-btn');
 const remainingGuesses = document.querySelector('.remaining-guesses');
 
-// build playing field, assign numbers to nodes, assign winning node
+// build playing field, assign numbers to nodes
 function initializeGame() {
     this.buildPlayingField();
     this.assignNodeVals();
@@ -137,10 +138,15 @@ function initializeGame() {
 let game = newGame();
 initializeGame.call(game);
 
+/* ---- EVENT HANDLING ---- */
+
 // gameplay
 function clickHandler(e) {
     // suspend actions except play again btn if lost
-    if (playerMessage.innerText === ('You Lose.' || 'You Win!') && !e.target.matches('#play-again-btn')) {return;}
+    let lost = playerMessage.innerText === 'You Lose.';
+    let won = playerMessage.innerText === 'You Win!';
+    let playAgainBtn = e.target.matches('#play-again-btn');
+    if ((lost || won) && !playAgainBtn) {return;}
     // gameNode
     if (gameNodes().some(node => e.target === node)) {
         gameNodes().forEach(node => node.classList.remove('currentChoice'));
@@ -149,16 +155,19 @@ function clickHandler(e) {
     }
     // submit-guess-btn
     if (e.target.matches('#submit-guess-btn')) {
+        // update playerMessage and toggle won/lost class on winning node
         let outcome = game.playersGuessSubmission(userGuess.innerText);
         playerMessage.innerText = outcome;
+        if (playerMessage.innerText === ('You Win!' || 'You Lose.')) {game.revealWinningNode();}
+        // opt. functionality for changing color scheme according to how close guess is
         switch (outcome) {
-            case 'You Win!': /* winning modal */; break;
-            case 'You Lose.': /* losing modal */; break;
+            case 'You Win!' || 'You Lose.': /* win / lose modal, split this condition... */; break;
             case "You\'re burning up!": /* toggle hot scheme */; break;
             case 'You\'re lukewarm.': /* toggle warm scheme */; break;
             case 'You\'re a bit chilly.': /* toggle chilly scheme */; break;
             case 'You\'re ice cold!': /* toggle cold scheme */; break;
         }
+        // update remaining guesses
         remainingGuesses.innerText = `Remaining Guesses: ${5 - game.pastGuesses.length}`;
     }
     // hint-btn

@@ -16,7 +16,8 @@ html {
     --accentDark: #278ea5;
     --accentLight: #21e6c1;
     --currentChoice: #f7d308;
-    --winnningNumber: #ff0000;
+    --lost: #ff0000;
+    --won: #00ff00;
 }
 body {
     background-color: var(--mainDarkBackground);
@@ -191,10 +192,16 @@ input[type=button]:hover {
     color: var(--hintTextColor);
     box-shadow: 0 0 0 var(--hintTextColor);
 }
-.playing-field span.winner {
-    border: 1px solid var(--winnningNumber);
+.playing-field span.won {
+    border: 1px solid var(--won);
     background-color: inherit;
-    color: var(--winnningNumber);
+    color: var(--won);
+    box-shadow: inherit;
+}
+.playing-field span.lost {
+    border: 1px solid var(--lost);
+    background-color: inherit;
+    color: var(--lost);
     box-shadow: inherit;
 }
 .remaining-guesses {

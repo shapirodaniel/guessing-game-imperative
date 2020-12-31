@@ -1,12 +1,4 @@
-/* 
-
-Write your guess-game code here! Don't forget to look at the test specs as a guide. You can run the specs
-by running "testem".
-
-In this file, you will also include the event listeners that are needed to interact with your HTML file when
-a user clicks a button or adds a guess to the input field.
-
-*/
+/* ---- GUESSING-GAME ---- */
 
 function generateWinningNumber() {
     let rand = Math.ceil(Math.random() * 100);
@@ -113,14 +105,10 @@ class Game {
         // important! IF won, remove currentChoice class to reveal winning color and updateWinStreak()
         if (winLoseClass === 'won') {
             winningNode.classList.remove('currentChoice');
-            this.updateWinStreak();
+            updateWinStreak();
         } else {
             winStreak.innerText = 'Current Win Streak: 0';
         }
-    }
-    updateWinStreak() {
-        let currWins = Number(winStreak.innerText.charAt(winStreak.innerText.length - 1));
-        winStreak.innerText = `Current Win Streak: ${++currWins}`;
     }
 }
 
@@ -139,6 +127,16 @@ const hintBtn = document.querySelector('#hint-btn');
 const playAgainBtn = document.querySelector('#play-again-btn');
 const winStreak = document.querySelector('.winstreak');
 const remainingGuesses = document.querySelector('.remaining-guesses');
+
+// closure tracks winstreak
+function getWinStreakFunc() {
+    let winStreakCount = 0;
+    return function() {
+        winStreakCount = playerMessage.innerText === 'You Win!' ? winStreakCount++ : 0;   
+        winStreak.innerText = `Current Win Streak: ${winstreakCount}`;
+    }
+}
+const updateWinStreak = getWinStreakFunc();
 
 // build playing field, assign numbers to nodes
 function initializeGame() {
@@ -179,6 +177,10 @@ function clickHandler(e) {
         }
         // update remaining guesses
         remainingGuesses.innerText = `Remaining Guesses: ${5 - game.pastGuesses.length}`;
+        // clear hints
+        gameNodes()
+            .filter(node => node.classList.contains('hint'))
+            .forEach(node => node.classList.remove('hint'));
     }
     // hint-btn
     if (e.target.matches('#hint-btn')) {

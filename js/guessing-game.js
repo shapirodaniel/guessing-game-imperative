@@ -20,18 +20,34 @@ function shuffle(arr) {
     }
     return arr;
 }
+function getMaxGuesses() {
+    switch(difficulty()) {
+        case 'easy': return 5;
+        case 'medium': return 4;
+        case 'hard': return 3;
+        case 'expert': return 2;
+        case 'jedi': return 1;
+    }
+}
+function getNumHints() {
+    switch(difficulty()) {
+        case 'easy': return 10;
+        case 'medium': return 20;
+        case 'hard': return 30;
+        case 'expert': return 50;
+        case 'jedi': return 0;
+    }
+}
 class Game {
     constructor() {
         this.playersGuess = null;
         this.pastGuesses = [];
         this.winningNumber = generateWinningNumber();
+        this.maxGuesses = getMaxGuesses();
+        this.numHints = getNumHints();
     }
     difference() {
         return Math.abs(this.playersGuess - this.winningNumber);
-    }
-    isLower() {
-        return this.playersGuess < this.winningNumber ? 
-            true : false;
     }
     playersGuessSubmission(num) {
         num = Number(num);
@@ -42,18 +58,21 @@ class Game {
         return this.checkGuess();
     }
     checkGuess() {
+
         // update guesses before checking if lost!
         let won = this.playersGuess === this.winningNumber;
         let alreadyGuessed = this.pastGuesses.includes(this.playersGuess);
         let novelGuess = !this.pastGuesses.includes(this.playersGuess) && this.playersGuess !== this.winningNumber;
         if (novelGuess) {this.pastGuesses.push(this.playersGuess);}
+        
         // adjust guess count, reveal winning node if lost
-        let lost = this.pastGuesses.length === 5;
+        let lost = this.pastGuesses.length === this.maxGuesses;
         let burningUp = this.difference() < 10
         let lukeWarm = this.difference() < 25;
         let bitChilly = this.difference() < 50;
         let iceCold = this.difference() < 100;
         if (lost) {game.revealWinningNode();}
+        
         // return game message
         switch (true) {
             case won:               return 'You Win!';
@@ -66,7 +85,7 @@ class Game {
         }
     }
     provideHint() {
-        let hints = new Array(9), alreadyPicked = [this.winningNumber];
+        let hints = new Array(this.numHints - 1), alreadyPicked = [this.winningNumber];
         for (let i=0; i<hints.length; i++) {
             hints[i] = generateWinningNumber();
             while (alreadyPicked.includes(hints[i])) {
@@ -75,7 +94,7 @@ class Game {
             alreadyPicked.push(hints[i]);
         }
         hints.push(this.winningNumber);
-        return shuffle(hints);
+        return hints;
     }
     // extra functionality
     buildPlayingField() {
@@ -108,16 +127,6 @@ class Game {
             updateWinStreak();
         } else {
             winStreak.innerText = 'Current Win Streak: 0';
-        }
-    }
-    adjustConditions_toDifficultyLevel() {
-        // adjust game conditions based on selected difficulty
-        switch (difficulty()) {
-            case 'easy': /* 5 guesses, 10 hints */; break;
-            case 'medium': /* 4 guesses, 20 hints */; break;
-            case 'hard': /* 3 guesses, 30 hints */; break;
-            case 'expert': /* 2 guesses, 50 hints */; break;
-            case 'jedi': /* 1 guess, if ask for hint, float a "reach out with your feelings..." message */; break;
         }
     }
 }
@@ -177,8 +186,31 @@ function getCheckBoxNode(e) {
     }
 }
 
+// playAgainBtn functionality
+function playAgain() {
+    // clear items for initialization
+    playingField.innerHTML = '';
+    userGuess.innerText = '';
+    playerMessage.innerText = '';
+    // initalize game and set guesses
+    game = newGame();
+    initializeGame.call(game);
+    remainingGuesses.innerText = `Remaining Guesses: ${game.maxGuesses}`;
+}
+
 // gameplay
 function clickHandler(e) {
+
+    // checkbox needs to be evaluated first!
+    // always functional
+    // calls initializeGame() after setting checkbox by clicking playAgainBtn
+    if (isCheckBox(e)) {
+        // do nothing if already checked
+        if (e.target.matches('.active')) {return;}
+        document.querySelector('.checkbox.active').classList.toggle('active');
+        getCheckBoxNode(e).classList.toggle('active');
+        playAgain();
+    }
 
     // suspend actions except play again btn if lost
     let lost = playerMessage.innerText === 'You Lose.';
@@ -208,7 +240,7 @@ function clickHandler(e) {
             case 'You\'re ice cold!': /* toggle cold scheme */; break;
         }
         // update remaining guesses
-        remainingGuesses.innerText = `Remaining Guesses: ${5 - game.pastGuesses.length}`;
+        remainingGuesses.innerText = `Remaining Guesses: ${game.maxGuesses - game.pastGuesses.length}`;
         // clear hints
         gameNodes()
             .filter(node => node.classList.contains('hint'))
@@ -217,6 +249,11 @@ function clickHandler(e) {
     
     // hint-btn
     if (e.target.matches('#hint-btn')) {
+        // no hints for jedi
+        if (difficulty() === 'jedi') {
+            playerMessage.innerText = 'Reach out with your feelings...';
+            return;
+        }
         // disable if one guess remaining
         if (numberOfGuessesLeft() === 1) {
             playerMessage.innerText = 'Not enough guesses left to hint...go for it!';
@@ -232,29 +269,15 @@ function clickHandler(e) {
             .forEach(node => node.classList.toggle('hint'));
         // add a null val to pastGuesses, update remainingGuesses
         game.pastGuesses.push(null);
-        remainingGuesses.innerText = `Remaining Guesses: ${5 - game.pastGuesses.length}`;
-        if (game.pastGuesses.length === 5) {
+        remainingGuesses.innerText = `Remaining Guesses: ${game.maxGuesses - game.pastGuesses.length}`;
+        if (game.pastGuesses.length === game.maxGuesses) {
             playerMessage.innerText = 'You Lose.';
             game.revealWinningNode();
         }
     }
     
     // play-again-btn
-    if (e.target.matches('#play-again-btn')) {
-        playingField.innerHTML = '';
-        userGuess.innerText = '';
-        playerMessage.innerText = '';
-        game = newGame();
-        initializeGame.call(game);
-        remainingGuesses.innerText = 'Remaining Guesses: 5';
-    }
-
-    // checkbox
-    if (isCheckBox(e)) {
-        if (e.target.matches('.active')) {return;}
-        document.querySelector('.checkbox.active').classList.toggle('active');
-        getCheckBoxNode(e).classList.toggle('active');
-    }
+    if (e.target.matches('#play-again-btn')) {playAgain();}
 }
 function focusoutHandler(e) {
     if (e.target.matches('.user-guess')) {

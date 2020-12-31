@@ -174,9 +174,12 @@ body {
     border-radius: 5px;
     padding: 1em 0;
     text-align: center;
+    height: 3em;
 }
 .player-message {
     line-height: 1.4em;
+    padding-left: .5em;
+    padding-right: .5em;
 }
 .guess-wrapper {
     display: grid;

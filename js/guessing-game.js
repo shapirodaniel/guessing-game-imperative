@@ -110,11 +110,21 @@ class Game {
             winStreak.innerText = 'Current Win Streak: 0';
         }
     }
+    adjustConditions_toDifficultyLevel() {
+        // adjust game conditions based on selected difficulty
+        switch (difficulty()) {
+            case 'easy': /* 5 guesses, 10 hints */; break;
+            case 'medium': /* 4 guesses, 20 hints */; break;
+            case 'hard': /* 3 guesses, 30 hints */; break;
+            case 'expert': /* 2 guesses, 50 hints */; break;
+            case 'jedi': /* 1 guess, if ask for hint, float a "reach out with your feelings..." message */; break;
+        }
+    }
 }
 
 /* ---- INIT GAME --- */
 
-// assign objects
+// assign vars
 const gameNodes = () => {return Array.from(document.querySelectorAll('.playing-field span'));}
 const body = document.querySelector('body');
 const playingField = document.querySelector('.playing-field');
@@ -127,13 +137,15 @@ const hintBtn = document.querySelector('#hint-btn');
 const playAgainBtn = document.querySelector('#play-again-btn');
 const winStreak = document.querySelector('.winstreak');
 const remainingGuesses = document.querySelector('.remaining-guesses');
+const numberOfGuessesLeft = () => {return Number(remainingGuesses.innerText[remainingGuesses.innerText.length - 1])};
+const difficulty = () => {return document.querySelector('.checkbox.active + .level-identifier').innerText;}
 
 // closure tracks winstreak
 function getWinStreakFunc() {
     let winStreakCount = 0;
     return function() {
-        winStreakCount = playerMessage.innerText === 'You Win!' ? winStreakCount++ : 0;   
-        winStreak.innerText = `Current Win Streak: ${winstreakCount}`;
+        winStreakCount = playerMessage.innerText === 'You Win!' ? ++winStreakCount : 0;   
+        winStreak.innerText = `Current Win Streak: ${winStreakCount}`;
     }
 }
 const updateWinStreak = getWinStreakFunc();
@@ -148,19 +160,39 @@ initializeGame.call(game);
 
 /* ---- EVENT HANDLING ---- */
 
+// difficulty switch functionality
+function isCheckBox(e) {
+    return e.target.matches('.checkmark, .checkbox, .level-identifier, .difficulty-switch-box');
+}
+function getCheckBoxNode(e) {
+    switch (true) {
+        case e.target.matches('.checkmark'):
+            return e.target.parentElement
+        case e.target.matches('.checkbox'): 
+            return e.target;
+        case e.target.matches('.level-identifier'): 
+            return e.target.previousElementSibling;
+        case e.target.matches('.difficulty-switch-box'): 
+            return Array.from(e.target.children)[0];
+    }
+}
+
 // gameplay
 function clickHandler(e) {
+
     // suspend actions except play again btn if lost
     let lost = playerMessage.innerText === 'You Lose.';
     let won = playerMessage.innerText === 'You Win!';
     let playAgainBtn = e.target.matches('#play-again-btn');
     if ((lost || won) && !playAgainBtn) {return;}
+    
     // gameNode
     if (gameNodes().some(node => e.target === node)) {
         gameNodes().forEach(node => node.classList.remove('currentChoice'));
         e.target.classList.add('currentChoice');
         userGuess.innerText = e.target.id;
     }
+    
     // submit-guess-btn
     if (e.target.matches('#submit-guess-btn')) {
         // update playerMessage and toggle won/lost class on winning node
@@ -182,8 +214,14 @@ function clickHandler(e) {
             .filter(node => node.classList.contains('hint'))
             .forEach(node => node.classList.remove('hint'));
     }
+    
     // hint-btn
     if (e.target.matches('#hint-btn')) {
+        // disable if one guess remaining
+        if (numberOfGuessesLeft() === 1) {
+            playerMessage.innerText = 'Not enough guesses left to hint...go for it!';
+            return;
+        }
         // clear prior hints
         gameNodes()
             .filter(node => node.matches('.hint'))
@@ -200,6 +238,7 @@ function clickHandler(e) {
             game.revealWinningNode();
         }
     }
+    
     // play-again-btn
     if (e.target.matches('#play-again-btn')) {
         playingField.innerHTML = '';
@@ -208,6 +247,13 @@ function clickHandler(e) {
         game = newGame();
         initializeGame.call(game);
         remainingGuesses.innerText = 'Remaining Guesses: 5';
+    }
+
+    // checkbox
+    if (isCheckBox(e)) {
+        if (e.target.matches('.active')) {return;}
+        document.querySelector('.checkbox.active').classList.toggle('active');
+        getCheckBoxNode(e).classList.toggle('active');
     }
 }
 function focusoutHandler(e) {

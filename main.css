@@ -150,11 +150,14 @@ body {
     background-color: var(--darkSquare);
     padding: .5em 0;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    height: 100%;
 }
 .sidebar-field-wrapper {
     width: 96%;
+    height: 100%;
     margin: 0 auto;
 }
 .player-info-wrapper {
@@ -224,6 +227,7 @@ input[type=button]:hover {
     grid-template-rows: 100%;
     padding: .5em;
     margin-top: .5em;
+    width: 100%;
 }
 .difficulty-switch-box {
     display: flex;
@@ -257,6 +261,14 @@ input[type=button]:hover {
     font-size: .9em;
 }
 
+@media (min-width: 600px) {
+    /* playing field */
+    .playing-field span {
+        width: 3em;
+        height: 3em;
+    }
+}
+
 @media (min-width: 930px) {
 
     /* ---- main content WRAPPER ---- */
@@ -274,10 +286,8 @@ input[type=button]:hover {
         background-color: var(--darkSquare);
         display: flex;
         flex-direction: column;
+        align-items: center;
         justify-content: center;
-    }
-    .sidebar-field-wrapper{
-        height: 80%;
     }
     .player-info-wrapper {
         display: grid;
@@ -310,6 +320,11 @@ input[type=button]:hover {
         font-size: 2.4em;
         text-align: center;
     }
+    .player-message {
+        padding-left: 1em;
+        padding-right: 1em;
+        line-height: 1.4rem;
+    }
     .button-wrapper {
         display: flex;
         flex-direction: column;
@@ -327,11 +342,5 @@ input[type=button]:hover {
         background-color: var(--lightSquare);
         color: var(--accentLight);
         border: 1px solid var(--accentLight);
-    }
-
-    /* playing field */
-    .playing-field span {
-        width: 3em;
-        height: 3em;
     }
 }

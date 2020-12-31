@@ -15,21 +15,6 @@
     <!-- wrapper -->
     <div class="wrapper">
 
-      <!-- sidebar -->
-      <div class="sidebar">
-        <div class="sidebar-field-wrapper">
-          <div class="winstreak">Current Win Streak: 0</div>
-          <div class="player-message"></div>
-          <div class="guess-wrapper">
-            <label for="user-guess">Your Guess:</label>
-            <div class="user-guess" contenteditable="true"></div>
-          </div>
-          <input type="button" id="submit-guess-btn" value="SUBMIT GUESS"/>
-          <input type="button" id="hint-btn" value="GET A HINT"/>
-          <input type="button" id="play-again-btn" value="PLAY AGAIN"/>
-        </div>
-      </div> 
-
       <!-- main -->
       <div class="main">
         
@@ -65,8 +50,29 @@
 
         <!-- playing field -->
         <div class="playing-field"></div>
-        <div class="remaining-guesses">Remaining Guesses: 5</div>
+        <div class="stats">
+          <div class="remaining-guesses">Remaining Guesses: 5</div>
+          <div class="winstreak">Current Win Streak: 0</div>
+        </div>
       </div>
+
+      <!-- sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-field-wrapper">
+          <div class="player-info-wrapper">
+            <div class="guess-wrapper">
+              <label for="user-guess">Your Guess:</label>
+              <div class="user-guess" contenteditable="true"></div>
+            </div>
+            <div class="player-message"></div>
+          </div>  
+          <div class="button-wrapper">
+            <input type="button" id="submit-guess-btn" value="SUBMIT GUESS"/>
+            <input type="button" id="hint-btn" value="GET A HINT"/>
+            <input type="button" id="play-again-btn" value="PLAY AGAIN"/>
+          </div>        
+        </div>
+      </div> 
 
     </div>
 

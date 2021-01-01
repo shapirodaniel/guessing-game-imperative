@@ -31,10 +31,10 @@ function getMaxGuesses() {
 }
 function getNumHints() {
     switch(difficulty()) {
-        case 'easy': return 10;
-        case 'medium': return 20;
-        case 'hard': return 30;
-        case 'expert': return 50;
+        case 'easy': return 5;
+        case 'medium': return 10;
+        case 'hard': return 15;
+        case 'expert': return 20;
         case 'jedi': return 0;
     }
 }

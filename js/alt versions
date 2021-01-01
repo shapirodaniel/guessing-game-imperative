@@ -1,0 +1,9 @@
+TILES
+no numbers
+
+BANDS OF COLOR
+no numbers
+
+BLITZ
+hints, wait a few seconds, animate hint fadeaway to display: none; with 
+// Math.random() * duration of completed fadeout

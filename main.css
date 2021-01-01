@@ -22,7 +22,8 @@ html {
 body {
     background-color: var(--mainDarkBackground);
     color: var(--accentDark);
-    margin: 0 0 -1em 0;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 /* ---- MAIN ---- */
@@ -225,7 +226,7 @@ input[type=button]:hover {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: 100%;
-    padding: .5em;
+    padding: .5em 0;
     margin-top: .5em;
     width: 100%;
 }
@@ -235,6 +236,7 @@ input[type=button]:hover {
     align-items: center;
     justify-content: center;
     width: 90%;
+    cursor: pointer;
 }
 .checkbox {
     background-color: var(--accentDark);
@@ -248,10 +250,10 @@ input[type=button]:hover {
 .checkmark {
     display: none;
     z-index: 1;
-    background-color: var(--mainLightBackground);
+    background-color: var(--mainDarkBackground);
     height: 64%;
     width: 64%;
-    border-radius: 15%;
+    border-radius: 50%;
 }
 .checkbox.active > .checkmark {
     display: block;

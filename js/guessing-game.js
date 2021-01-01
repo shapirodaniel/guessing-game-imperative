@@ -121,13 +121,10 @@ class Game {
         let winningNode = document.getElementById(this.winningNumber);
         let winLoseClass = playerMessage.innerText === 'You Win!' ? 'won' : 'lost';
         winningNode.classList.toggle(winLoseClass);
-        // important! IF won, remove currentChoice class to reveal winning color and updateWinStreak()
         if (winLoseClass === 'won') {
             winningNode.classList.remove('currentChoice');
-            updateWinStreak();
-        } else {
-            winStreak.innerText = 'Current Win Streak: 0';
         }
+        updateWinStreak();
     }
 }
 
@@ -153,7 +150,11 @@ const difficulty = () => {return document.querySelector('.checkbox.active + .lev
 function getWinStreakFunc() {
     let winStreakCount = 0;
     return function() {
-        winStreakCount = playerMessage.innerText === 'You Win!' ? ++winStreakCount : 0;   
+        if (playerMessage.innerText === 'You Win!') {
+            winStreakCount++;
+         } else {
+            winStreakCount = 0;
+         }   
         winStreak.innerText = `Current Win Streak: ${winStreakCount}`;
     }
 }

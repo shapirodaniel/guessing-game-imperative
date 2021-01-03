@@ -280,20 +280,6 @@ function clickHandler(e) {
     // play-again-btn
     if (e.target.matches('#play-again-btn')) {playAgain();}
 }
-function focusoutHandler(e) {
-    if (e.target.matches('.user-guess')) {
-        let val = Number(e.target.innerText);
-        let isValid = !(val < 1 || val > 100 || isNaN(val));
-        let currChoice = document.querySelector('.currentChoice');
-        if (currChoice) {currChoice.classList.remove('currentChoice');}
-        if (isValid) {document.getElementById(val).classList.add('currentChoice');}
-    }
-}
-function keydownHandler(e) {
-    if (e.keyCode === 13) {e.target.blur();}
-}
 
 // assign ELs
 body.addEventListener('click', clickHandler);
-body.addEventListener('focusout', focusoutHandler);
-body.addEventListener('keydown', keydownHandler);
